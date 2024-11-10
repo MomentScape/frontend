@@ -12,6 +12,11 @@
 <!--    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js"></script>-->
 
     <script>
+
+        let ciel = "https://api.momentscape.tech/file?path=71fdb924-1c30-447b-8e18-bfd76587d656/textures/ceiling.png"
+        let cielThing = document.querySelector("#floor")
+        cielThing.setAttribute("src", ciel)
+
         is_TV_on = false;
         is_light_on = false;
         is_time_machine_running = false;
@@ -120,6 +125,7 @@
         <img id="tile_2" src="assets/wall_3.jpeg">
         <img id="floor" src="assets/ceiling1.png">
         <img id="wood_material" src="assets/wood_2.png">
+        <img id="ciel" src="">
 
         <a-asset-item id="my_cat" src="assets/tmpqjnrme7r.gltf">
         <a-asset-item id="toy_car" src="assets/fallout_car_2/scene.gltf">
@@ -162,16 +168,16 @@
     <!--Exterior-->
     <a-obj-model material="" scale="0.03 0.03 0.03" position="-1.44 0.051 16.579" src="assets/puerta.obj"
                  mtl="assets/puerta.mtl" class="intersectable"></a-obj-model>
-    <a-box src="#tile_2" id="exterior-wall-1" depth="30" height="10" width="5" position="-6.039 9.169 15.38"
+    <a-box src="#tile" id="exterior-wall-1" depth="30" height="10" width="5" position="-6.039 9.169 15.38"
            geometry="height:18.5;depth:42;width:0.22" rotation="0 90 0"></a-box>
-    <a-box src="#tile_2" id="exterior-wall-9" depth="30" height="10" width="5" position="-27.163 2.933 0"
+    <a-box src="#tile" id="exterior-wall-9" depth="30" height="10" width="5" position="-27.163 2.933 0"
            geometry="height:35;width:0.22"></a-box>
 
     <!-- Floors -->
-    <a-box position="-5.996 0 0" src="#floor" depth="30" height=".2" width="30" geometry="width:42"></a-box>
+    <a-box position="-5.996 0 0" src="#floor" depth="30" height="1" width="30" geometry="width:102"></a-box>
     <!-- <a-box src="#floor" depth="30" height=".2" width="30" position="-2.936 9.924 0" geometry="width:23.97"></a-box> -->
-    <a-box src="#floor" depth="30" height=".2" width="30" position="26.883 14.709 0" geometry="width:23.97"></a-box>
-    <a-box src="#floor" depth="30" height=".2" width="30" position="-6.182 19.992 0" geometry="width:42"></a-box>
+    <a-box src="#ciel" depth="30" height="1" width="30" position="26.883 14.709 0" geometry="width:23.97"></a-box>
+    <a-box src="#ciel" depth="30" height="1" width="30" position="-6.182 19.992 0" geometry="width:42"></a-box>
 
     <!-- Walls -->
     <a-entity>
