@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="./libs/aframe.min.js"></script>
-    <script src="./libs/aframe-extras.min.js"></script>
-    <script src="./libs/aframe-environment-component.min.js"></script>
-    <script src="./libs/aframe-look-at-component.min.js"></script>
-    <script src="./libs/aframe-animation-component.min.js"></script>
-    <script src="./libs/aframe-mouse-cursor-component.min.js"></script>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+        <!-- <script src="./libs/aframe-extras.min.js"></script>
+        <script src="./libs/aframe-environment-component.min.js"></script>
+        <script src="./libs/aframe-look-at-component.min.js"></script>
+        <script src="./libs/aframe-animation-component.min.js"></script>
+        <script src="./libs/aframe-mouse-cursor-component.min.js"></script> -->
     <script src="./libs/glow.js"></script>
 
 <!--    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js"></script>-->
@@ -127,19 +127,7 @@
         <img id="wood_material" src="assets/wood_2.png">
         <img id="ciel" src="">
 
-        <a-asset-item id="my_cat" src="assets/tmpqjnrme7r.gltf">
-        <a-asset-item id="toy_car" src="assets/fallout_car_2/scene.gltf">
-        <a-asset-item id="fridge" src="assets/fridge/scene.gltf">
-        <a-asset-item id="rail_switch" src="assets/rail_switch/scene.gltf">
-        <a-asset-item id="girl_1" src="assets/pirate/scene.gltf">
-        <a-asset-item id="girl_2" src="assets/girl_2/scene.gltf">
-        <a-asset-item id="boy_1" src="assets/boy_1/scene.gltf">
-        <a-asset-item id="mask" src="assets/mask/scene.gltf">
-        <a-asset-item id="toiletpaper" src="assets/toiletpaper/scene.gltf">
-        <a-asset-item id="ceiling_fan_3" src="assets/ceilingFan_3/scene.gltf">
-        <a-asset-item id="sofa_2" src="assets/sofa_2/scene.gltf">
-        <a-asset-item id="guitar" src="assets/guitar/scene.gltf">
-        <a-asset-item id="game_machine" src="assets/game_machine/scene.gltf">
+        <a-asset-item id="my_dog" src="assets/tmpqjnrme7r.gltf">
 
     </a-assets>
 
@@ -190,8 +178,8 @@
     </a-entity>
 
     <a-entity id="cat_box" visible="true">
-       <a-gltf-model id="cat" src="#my_cat" rotation="0 -30 0" position="1.969 1.714 -3.174"
-                     animation-mixer scale="30 30 30">
+       <a-gltf-model id="dog" src="#my_dog" rotation="0 -30 0" position="1.969 1.714 -3.174"
+                     animation-mixer scale="3 3 3">
            <a-animation attribute="scale"
                         dur="3000"
                         from="1 1 1"
@@ -208,29 +196,8 @@
     <!-- Door -->
     <a-obj-model scale="0.03 0.03 0.03" position="-1.44 0.051 15.89" src="assets/puerta.obj" mtl="assets/puerta.mtl"
                  class="intersectable"></a-obj-model>
-
-    <a-obj-model id="armchair2" src="assets/armChair2/armChair2.obj" mtl="assets/armChair2/armChair2.mtl"
-                 position="34 0.15 3" scale="0.04 0.04 0.04" material="" rotation="0 -90 0"></a-obj-model>
 </a-scene>
 
-
-<script>
-    // Teleport --------
-    var cam = document.querySelector('#cam_parent');
-    var teleport_up = document.querySelector('#up');
-    var teleport_down = document.querySelector('#down');
-
-
-    teleport_up.addEventListener('click', function () {
-        cam.setAttribute('position', {x: 10, y: 14, z: 12});
-        cam.setAttribute('rotation', {x: 0, y: 50, z: 0});
-    });
-    teleport_down.addEventListener('click', function () {
-        cam.setAttribute('position', {x: 11.557, y: 2.7, z: -5.536});
-        cam.setAttribute('rotation', {x: 0, y: 0, z: 0});
-    });
-    //-----------
-</script>
 
 </body>
 </html>
