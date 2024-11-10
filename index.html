@@ -1,230 +1,255 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="./libs/aframe.min.js"></script>
-    <script src="./libs/aframe-extras.min.js"></script>
-    <script src="./libs/aframe-environment-component.min.js"></script>
-    <script src="./libs/aframe-look-at-component.min.js"></script>
-    <script src="./libs/aframe-animation-component.min.js"></script>
-    <script src="./libs/aframe-mouse-cursor-component.min.js"></script>
-    <script src="./libs/glow.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MomentScape</title>
+    <style>
+        /* Page and Background Styles */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
 
-<!--    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js"></script>-->
+        .background-shape {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            opacity: 0.5;
+            pointer-events: none;
+        }
 
+        .background-shape-left {
+            left: -100px;
+        }
+
+        .background-shape-right {
+            right: -100px;
+        }
+
+        /* Header */
+        h1 {
+            font-size: 3rem;
+            margin-top: 20px;
+            z-index: 1;
+        }
+
+        p {
+            font-size: 1.2rem;
+            text-align: center;
+            max-width: 500px;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+            z-index: 1;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1;
+        }
+
+        .upload-button {
+            padding: 15px 30px;
+            background-color: #ffffff;
+            color: #2575fc;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .upload-button:hover {
+            background-color: #2575fc;
+            color: #ffffff;
+        }
+
+        .upload-button input[type="file"] {
+            display: none;
+        }
+
+        /* Thumbnails and List Layout */
+        .thumbnails {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 500px;
+            gap: 15px;
+            margin-top: 1rem;
+        }
+
+        .thumbnail-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #ffffff;
+            color: #2575fc;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .thumbnail-container:hover {
+            transform: scale(1.03);
+        }
+
+        .thumbnail-container img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .vr-link {
+            padding: 5px 10px;
+            background-color: #6a11cb;
+            color: #ffffff;
+            font-weight: bold;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .vr-link:hover {
+            background-color: #2575fc;
+            transform: scale(1.1);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .clear-button, .image-count {
+            padding: 8px 15px;
+            background-color: #ffffff;
+            color: #2575fc;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .clear-button:hover {
+            background-color: #2575fc;
+            color: #ffffff;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+            text-align: center;
+            color: #ffffff;
+            font-size: 1rem;
+            background-color: #1a1a2e;
+            width: 100%;
+        }
+    </style>
     <script>
-        is_TV_on = false;
-        is_light_on = false;
-        is_time_machine_running = false;
+        let imageCount = 0;
 
-        // sleep time expects milliseconds
-        function sleep(time) {
-            return new Promise((resolve) => setTimeout(resolve, time));
-        }
+        function handleFileUpload(input) {
+            const files = input.files;
+            const thumbnailsContainer = document.querySelector(".thumbnails");
 
+            Array.from(files).forEach((file) => {
+                if (file && file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        // Create container for thumbnail and VR link
+                        const thumbnailContainer = document.createElement("div");
+                        thumbnailContainer.classList.add("thumbnail-container");
 
-        function toggle_audio(audio_file, play) {
-            if (play) {
-                play_audio(audio_file)
-            } else {
-                pause_audio(audio_file)
-            }
-        }
+                        // Create and append thumbnail
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.alt = "Uploaded image";
+                        thumbnailContainer.appendChild(img);
 
+                        // Create and append VR link
+                        const vrLink = document.createElement("a");
+                        vrLink.href = "vr.html";
+                        vrLink.classList.add("vr-link");
+                        vrLink.innerText = "VR Experience";
+                        vrLink.onclick = function () {
+                            alert("Entering VR Experience for this image!");
+                            return true;
+                        };
+                        thumbnailContainer.appendChild(vrLink);
 
-        function play_audio(audio_file) {
-            var audio = document.getElementById(audio_file);
-            audio.play();
-        }
-
-        function pause_audio(audio_file) {
-            var audio = document.getElementById(audio_file);
-            audio.pause();
-        }
-
-        function switch_light() {
-            if (is_time_machine_running)
-                return;
-            var light = document.querySelector("#insideLight");
-            var text = document.querySelector("#SwitchText");
-
-            text.setAttribute('visible', 'false');
-            play_audio("light_switch")
-
-            if (!is_light_on) {
-                light.setAttribute('light', 'color', '#222');
-                is_light_on = true;
-            } else {
-                light.setAttribute('light', 'color', '#DDD');
-                is_light_on = false;
-            }
-        }
-
-        function TVClick() {
-            if (is_time_machine_running) {
-                return;
-            }
-            var screen = document.querySelector("#TVScreen");
-            var text = document.querySelector("#TVText");
-
-            text.setAttribute('visible', 'false');
-
-            if (!is_TV_on) {
-                screen.setAttribute('material', 'color', 'white');
-                is_TV_on = true;
-            } else {
-                screen.setAttribute('material', 'color', 'black');
-                is_TV_on = false;
-
-            }
-            toggle_audio("champion_league", is_TV_on)
-        }
-
-
-        AFRAME.registerComponent("name-on-hover", {
-            schema: {
-                target: {
-                    type: "selector",
-                    default: ""
+                        thumbnailsContainer.appendChild(thumbnailContainer);
+                        imageCount++;
+                        updateImageCount();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    alert("Please upload a valid image file.");
                 }
-            },
-            init: function () {
-                var target = this.data.target;
-                var el = this.el;
-                this.setupNamePos();
-                el.addEventListener("mouseenter", function () {
-                    target.emit("in"); // animate in
-                });
-                el.addEventListener("mouseleave", function () {
-                    target.emit("out"); // animate out
-                });
-            },
-            setupNamePos: function () {
-                var name = this.data.target; // get name element
-                var elPos = this.el.getAttribute("position"); // get the pos of hovered element
+            });
 
-                name.setAttribute("position", {
-                    //set name position relevant to hovered element
-                    x: elPos.x,
-                    y: elPos.y + 2,
-                    z: elPos.z
-                });
-            }
-        });
+            // Clear the input to allow uploading the same image again if desired
+            input.value = "";
+        }
+
+        function clearThumbnails() {
+            document.querySelector(".thumbnails").innerHTML = "";
+            imageCount = 0;
+            updateImageCount();
+        }
+
+        function updateImageCount() {
+            document.querySelector(".image-count").innerText = `Images Uploaded: ${imageCount}`;
+        }
     </script>
 </head>
 <body>
-<a-scene>
-    <a-assets>
-        <img id="wood" src="assets/hardwood.jpg">
-        <img id="tile" src="assets/wall.jpg">
-        <img id="tile_2" src="assets/wall_3.jpeg">
-        <img id="floor" src="assets/ceiling1.png">
-        <img id="wood_material" src="assets/wood_2.png">
 
-        <a-asset-item id="my_cat" src="assets/tmpqjnrme7r.gltf">
-        <a-asset-item id="toy_car" src="assets/fallout_car_2/scene.gltf">
-        <a-asset-item id="fridge" src="assets/fridge/scene.gltf">
-        <a-asset-item id="rail_switch" src="assets/rail_switch/scene.gltf">
-        <a-asset-item id="girl_1" src="assets/pirate/scene.gltf">
-        <a-asset-item id="girl_2" src="assets/girl_2/scene.gltf">
-        <a-asset-item id="boy_1" src="assets/boy_1/scene.gltf">
-        <a-asset-item id="mask" src="assets/mask/scene.gltf">
-        <a-asset-item id="toiletpaper" src="assets/toiletpaper/scene.gltf">
-        <a-asset-item id="ceiling_fan_3" src="assets/ceilingFan_3/scene.gltf">
-        <a-asset-item id="sofa_2" src="assets/sofa_2/scene.gltf">
-        <a-asset-item id="guitar" src="assets/guitar/scene.gltf">
-        <a-asset-item id="game_machine" src="assets/game_machine/scene.gltf">
+    <!-- Background Shapes for Visual Appeal -->
+    <div class="background-shape background-shape-left"></div>
+    <div class="background-shape background-shape-right"></div>
 
-    </a-assets>
+    <!-- Header -->
+    <h1>Welcome to MomentScape</h1>
+    <p>Capture and explore your favorite moments in a virtual world. Start by uploading your images to create a VR experience for each one.</p>
 
-    <a-entity id="cam_parent" position="-1 3.7 8" rotation="0 -20 0">
+    <!-- Upload Section -->
+    <div class="upload-section">
+        <label class="upload-button">
+            Upload Pictures
+            <input type="file" accept="image/*" multiple onchange="handleFileUpload(this)" />
+        </label>
 
-        <a-camera id="cam" universal-controls>
+        <div class="controls">
+            <span class="image-count">Images Uploaded: 0</span>
+            <button class="clear-button" onclick="clearThumbnails()">Clear All</button>
+        </div>
+        
+        <div class="thumbnails">
+            <!-- Thumbnails and VR Experience links will be added here dynamically -->
+        </div>
+    </div>
 
-            <a-entity raycaster="far: 8; objects: .intersectable" cursor geometry="primitive: ring; radiusOuter: 0.015;
-                              radiusInner: 0.01; segmentsTheta: 32" material="color: #283644; shader: flat"
-                      position="0 0 -0.75"></a-entity>
-        </a-camera>
-    </a-entity>
-
-
-    <!-- House Frame -->
-    <!--Roof-->
-    <a-triangle src="assets/roof-tile.jpg" position="6.871 33.947 -7.836" rotation="-27.5 180 0" scale="75 35 25"
-                material="side:double" geometry=""></a-triangle>
-    <a-triangle src="assets/roof-tile.jpg" position="6.871 33.947 7.812" rotation="-27.5 0 0" scale="75 35 25"
-                material="side:double"></a-triangle>
-    <a-triangle src="assets/roof-tile.jpg" position="25.237 33.947 -0.043" rotation="-50.5 90 0" scale="31.5 48 25"
-                material="side:double"></a-triangle>
-    <a-triangle src="assets/roof-tile.jpg" position="-11.759 33.947 0.011" rotation="50.5 90 0" scale="31.5 48 25"
-                material="side:double"></a-triangle>
-
-    <!--Exterior-->
-    <a-obj-model material="" scale="0.03 0.03 0.03" position="-1.44 0.051 16.579" src="assets/puerta.obj"
-                 mtl="assets/puerta.mtl" class="intersectable"></a-obj-model>
-    <a-box src="#tile_2" id="exterior-wall-1" depth="30" height="10" width="5" position="-6.039 9.169 15.38"
-           geometry="height:18.5;depth:42;width:0.22" rotation="0 90 0"></a-box>
-    <a-box src="#tile_2" id="exterior-wall-9" depth="30" height="10" width="5" position="-27.163 2.933 0"
-           geometry="height:35;width:0.22"></a-box>
-
-    <!-- Floors -->
-    <a-box position="-5.996 0 0" src="#floor" depth="30" height=".2" width="30" geometry="width:42"></a-box>
-    <!-- <a-box src="#floor" depth="30" height=".2" width="30" position="-2.936 9.924 0" geometry="width:23.97"></a-box> -->
-    <a-box src="#floor" depth="30" height=".2" width="30" position="26.883 14.709 0" geometry="width:23.97"></a-box>
-    <a-box src="#floor" depth="30" height=".2" width="30" position="-6.182 19.992 0" geometry="width:42"></a-box>
-
-    <!-- Walls -->
-    <a-entity>
-        <a-box src="#tile" depth="30" height="10" width="5" position="-6.039 9.88 15.021"
-               geometry="depth:42;height:20;width:0.22" rotation="0 90 0"></a-box>
-        <a-box src="#tile" depth="30" height="10" width="5" position="-5.995 9.923 -14.914"
-               geometry="depth:42;height:20;width:0.4" rotation="0 90 0"></a-box>
-        <a-box src="#tile" depth="30" height="10" width="5" position="15.001 8.326 -3.878"
-               geometry="depth:42;height:35;width:0.22"></a-box>
-    </a-entity>
-
-    <a-entity id="cat_box" visible="true">
-       <a-gltf-model id="cat" src="#my_cat" rotation="0 -30 0" position="1.969 1.714 -3.174"
-                     animation-mixer scale="30 30 30">
-           <a-animation attribute="scale"
-                        dur="3000"
-                        from="1 1 1"
-                        to="1 1 1"
-                        repeat="never"></a-animation>
-       </a-gltf-model>
-   </a-entity>
-
-<!--    &lt;!&ndash;Environment&ndash;&gt;-->
-    <a-entity environment="preset: contact" groundColor: #445 side: double; repeat: 100 100;></a-entity>
-    <a-entity id="insideLight" light="color:#DDD;type:ambient" position="0 6.486 2.815"></a-entity>
-
-
-    <!-- Door -->
-    <a-obj-model scale="0.03 0.03 0.03" position="-1.44 0.051 15.89" src="assets/puerta.obj" mtl="assets/puerta.mtl"
-                 class="intersectable"></a-obj-model>
-
-    <a-obj-model id="armchair2" src="assets/armChair2/armChair2.obj" mtl="assets/armChair2/armChair2.mtl"
-                 position="34 0.15 3" scale="0.04 0.04 0.04" material="" rotation="0 -90 0"></a-obj-model>
-</a-scene>
-
-
-<script>
-    // Teleport --------
-    var cam = document.querySelector('#cam_parent');
-    var teleport_up = document.querySelector('#up');
-    var teleport_down = document.querySelector('#down');
-
-
-    teleport_up.addEventListener('click', function () {
-        cam.setAttribute('position', {x: 10, y: 14, z: 12});
-        cam.setAttribute('rotation', {x: 0, y: 50, z: 0});
-    });
-    teleport_down.addEventListener('click', function () {
-        cam.setAttribute('position', {x: 11.557, y: 2.7, z: -5.536});
-        cam.setAttribute('rotation', {x: 0, y: 0, z: 0});
-    });
-    //-----------
-</script>
+    <!-- Footer -->
+    <footer class="footer">
+        <p>MomentScape - Capture Your World in VR</p>
+    </footer>
 
 </body>
 </html>

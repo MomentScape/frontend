@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="./libs/aframe.min.js"></script>
+    <script src="./libs/aframe-extras.min.js"></script>
+    <script src="./libs/aframe-environment-component.min.js"></script>
+    <script src="./libs/aframe-look-at-component.min.js"></script>
+    <script src="./libs/aframe-animation-component.min.js"></script>
+    <script src="./libs/aframe-mouse-cursor-component.min.js"></script>
+    <script src="./libs/glow.js"></script>
+
+<!--    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js"></script>-->
+
+    <script>
+        is_TV_on = false;
+        is_light_on = false;
+        is_time_machine_running = false;
+
+        // sleep time expects milliseconds
+        function sleep(time) {
+            return new Promise((resolve) => setTimeout(resolve, time));
+        }
+
+
+        function toggle_audio(audio_file, play) {
+            if (play) {
+                play_audio(audio_file)
+            } else {
+                pause_audio(audio_file)
+            }
+        }
+
+
+        function play_audio(audio_file) {
+            var audio = document.getElementById(audio_file);
+            audio.play();
+        }
+
+        function pause_audio(audio_file) {
+            var audio = document.getElementById(audio_file);
+            audio.pause();
+        }
+
+        function switch_light() {
+            if (is_time_machine_running)
+                return;
+            var light = document.querySelector("#insideLight");
+            var text = document.querySelector("#SwitchText");
+
+            text.setAttribute('visible', 'false');
+            play_audio("light_switch")
+
+            if (!is_light_on) {
+                light.setAttribute('light', 'color', '#222');
+                is_light_on = true;
+            } else {
+                light.setAttribute('light', 'color', '#DDD');
+                is_light_on = false;
+            }
+        }
+
+        function TVClick() {
+            if (is_time_machine_running) {
+                return;
+            }
+            var screen = document.querySelector("#TVScreen");
+            var text = document.querySelector("#TVText");
+
+            text.setAttribute('visible', 'false');
+
+            if (!is_TV_on) {
+                screen.setAttribute('material', 'color', 'white');
+                is_TV_on = true;
+            } else {
+                screen.setAttribute('material', 'color', 'black');
+                is_TV_on = false;
+
+            }
+            toggle_audio("champion_league", is_TV_on)
+        }
+
+
+        AFRAME.registerComponent("name-on-hover", {
+            schema: {
+                target: {
+                    type: "selector",
+                    default: ""
+                }
+            },
+            init: function () {
+                var target = this.data.target;
+                var el = this.el;
+                this.setupNamePos();
+                el.addEventListener("mouseenter", function () {
+                    target.emit("in"); // animate in
+                });
+                el.addEventListener("mouseleave", function () {
+                    target.emit("out"); // animate out
+                });
+            },
+            setupNamePos: function () {
+                var name = this.data.target; // get name element
+                var elPos = this.el.getAttribute("position"); // get the pos of hovered element
+
+                name.setAttribute("position", {
+                    //set name position relevant to hovered element
+                    x: elPos.x,
+                    y: elPos.y + 2,
+                    z: elPos.z
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+<a-scene>
+    <a-assets>
+        <img id="wood" src="assets/hardwood.jpg">
+        <img id="tile" src="assets/wall.jpg">
+        <img id="tile_2" src="assets/wall_3.jpeg">
+        <img id="floor" src="assets/ceiling1.png">
+        <img id="wood_material" src="assets/wood_2.png">
+
+        <a-asset-item id="my_cat" src="assets/tmpqjnrme7r.gltf">
+        <a-asset-item id="toy_car" src="assets/fallout_car_2/scene.gltf">
+        <a-asset-item id="fridge" src="assets/fridge/scene.gltf">
+        <a-asset-item id="rail_switch" src="assets/rail_switch/scene.gltf">
+        <a-asset-item id="girl_1" src="assets/pirate/scene.gltf">
+        <a-asset-item id="girl_2" src="assets/girl_2/scene.gltf">
+        <a-asset-item id="boy_1" src="assets/boy_1/scene.gltf">
+        <a-asset-item id="mask" src="assets/mask/scene.gltf">
+        <a-asset-item id="toiletpaper" src="assets/toiletpaper/scene.gltf">
+        <a-asset-item id="ceiling_fan_3" src="assets/ceilingFan_3/scene.gltf">
+        <a-asset-item id="sofa_2" src="assets/sofa_2/scene.gltf">
+        <a-asset-item id="guitar" src="assets/guitar/scene.gltf">
+        <a-asset-item id="game_machine" src="assets/game_machine/scene.gltf">
+
+    </a-assets>
+
+    <a-entity id="cam_parent" position="-1 3.7 8" rotation="0 -20 0">
+
+        <a-camera id="cam" universal-controls>
+
+            <a-entity raycaster="far: 8; objects: .intersectable" cursor geometry="primitive: ring; radiusOuter: 0.015;
+                              radiusInner: 0.01; segmentsTheta: 32" material="color: #283644; shader: flat"
+                      position="0 0 -0.75"></a-entity>
+        </a-camera>
+    </a-entity>
+
+
+    <!-- House Frame -->
+    <!--Roof-->
+    <a-triangle src="assets/roof-tile.jpg" position="6.871 33.947 -7.836" rotation="-27.5 180 0" scale="75 35 25"
+                material="side:double" geometry=""></a-triangle>
+    <a-triangle src="assets/roof-tile.jpg" position="6.871 33.947 7.812" rotation="-27.5 0 0" scale="75 35 25"
+                material="side:double"></a-triangle>
+    <a-triangle src="assets/roof-tile.jpg" position="25.237 33.947 -0.043" rotation="-50.5 90 0" scale="31.5 48 25"
+                material="side:double"></a-triangle>
+    <a-triangle src="assets/roof-tile.jpg" position="-11.759 33.947 0.011" rotation="50.5 90 0" scale="31.5 48 25"
+                material="side:double"></a-triangle>
+
+    <!--Exterior-->
+    <a-obj-model material="" scale="0.03 0.03 0.03" position="-1.44 0.051 16.579" src="assets/puerta.obj"
+                 mtl="assets/puerta.mtl" class="intersectable"></a-obj-model>
+    <a-box src="#tile_2" id="exterior-wall-1" depth="30" height="10" width="5" position="-6.039 9.169 15.38"
+           geometry="height:18.5;depth:42;width:0.22" rotation="0 90 0"></a-box>
+    <a-box src="#tile_2" id="exterior-wall-9" depth="30" height="10" width="5" position="-27.163 2.933 0"
+           geometry="height:35;width:0.22"></a-box>
+
+    <!-- Floors -->
+    <a-box position="-5.996 0 0" src="#floor" depth="30" height=".2" width="30" geometry="width:42"></a-box>
+    <!-- <a-box src="#floor" depth="30" height=".2" width="30" position="-2.936 9.924 0" geometry="width:23.97"></a-box> -->
+    <a-box src="#floor" depth="30" height=".2" width="30" position="26.883 14.709 0" geometry="width:23.97"></a-box>
+    <a-box src="#floor" depth="30" height=".2" width="30" position="-6.182 19.992 0" geometry="width:42"></a-box>
+
+    <!-- Walls -->
+    <a-entity>
+        <a-box src="#tile" depth="30" height="10" width="5" position="-6.039 9.88 15.021"
+               geometry="depth:42;height:20;width:0.22" rotation="0 90 0"></a-box>
+        <a-box src="#tile" depth="30" height="10" width="5" position="-5.995 9.923 -14.914"
+               geometry="depth:42;height:20;width:0.4" rotation="0 90 0"></a-box>
+        <a-box src="#tile" depth="30" height="10" width="5" position="15.001 8.326 -3.878"
+               geometry="depth:42;height:35;width:0.22"></a-box>
+    </a-entity>
+
+    <a-entity id="cat_box" visible="true">
+       <a-gltf-model id="cat" src="#my_cat" rotation="0 -30 0" position="1.969 1.714 -3.174"
+                     animation-mixer scale="30 30 30">
+           <a-animation attribute="scale"
+                        dur="3000"
+                        from="1 1 1"
+                        to="1 1 1"
+                        repeat="never"></a-animation>
+       </a-gltf-model>
+   </a-entity>
+
+<!--    &lt;!&ndash;Environment&ndash;&gt;-->
+    <a-entity environment="preset: contact" groundColor: #445 side: double; repeat: 100 100;></a-entity>
+    <a-entity id="insideLight" light="color:#DDD;type:ambient" position="0 6.486 2.815"></a-entity>
+
+
+    <!-- Door -->
+    <a-obj-model scale="0.03 0.03 0.03" position="-1.44 0.051 15.89" src="assets/puerta.obj" mtl="assets/puerta.mtl"
+                 class="intersectable"></a-obj-model>
+
+    <a-obj-model id="armchair2" src="assets/armChair2/armChair2.obj" mtl="assets/armChair2/armChair2.mtl"
+                 position="34 0.15 3" scale="0.04 0.04 0.04" material="" rotation="0 -90 0"></a-obj-model>
+</a-scene>
+
+
+<script>
+    // Teleport --------
+    var cam = document.querySelector('#cam_parent');
+    var teleport_up = document.querySelector('#up');
+    var teleport_down = document.querySelector('#down');
+
+
+    teleport_up.addEventListener('click', function () {
+        cam.setAttribute('position', {x: 10, y: 14, z: 12});
+        cam.setAttribute('rotation', {x: 0, y: 50, z: 0});
+    });
+    teleport_down.addEventListener('click', function () {
+        cam.setAttribute('position', {x: 11.557, y: 2.7, z: -5.536});
+        cam.setAttribute('rotation', {x: 0, y: 0, z: 0});
+    });
+    //-----------
+</script>
+
+</body>
+</html>
